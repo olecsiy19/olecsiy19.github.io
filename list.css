@@ -1,0 +1,18 @@
+.true {
+ background-color: lightgreen;
+}
+.false {
+  background-color: lightpink;
+}
+form .ng-invalid.ng-dirty {
+	background-color: lightpink;
+}
+form .ng-valid.ng-dirty {
+	background-color: lightgreen;
+}
+.h2{
+	text-align: center;
+}
+.h4 {
+	text-align: center;
+}

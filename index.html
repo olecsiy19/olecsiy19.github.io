@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html ng-app="ContactsList">
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+    <script src="moment.min.js" charset="utf-8"></script>
+    <script src="moment-timezone-with-data.min.js" charset="utf-8"></script>
+    <script src="list.js"></script>
+    <link rel="stylesheet" href="list.css">
+    <link href="bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap-theme.css" rel="stylesheet" />
+</head>
+<body>
+    <div style="width:1200px; margin:0 auto">
+        <h2 class="h2">Contacts list</h2>
+        <div class="panel" ng-controller="ListCtrl">
+            <h4 class="h4">You have {{contacts.length-1}} contacts</h4>
+            <table class="table">
+                <tbody>
+                    <tr ng-repeat="contact in contacts">
+                        <td><span ng-if="!$first">{{$index}}</span></td>
+                        <td><span>{{contact.name}}</span></td>
+                        <td><span>{{contact.location}}</span></td>
+                        <td><span>{{addHours(contact.timeZone)}}{{clock(contact.location)}}{{time}}</span></td>
+                        <td ng-repeat="hour in hours" ng-class="(hour>8 && hour<19)?'true':'false'"><span>{{hour}}</span></td>
+                        <td><button  class="btn-primary" ng-if="!$first" ng-click="removeContact($index)">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <form class="row" name="addNewContact"  novalidate ng-submit="addContact()">
+                <div class="col-xs-5">
+                    <input autocomplete="off" name="nameContact" class="form-control" type="text" ng-model="contactName"
+                       required ng-pattern="validName" ng-minlength="4" ng-maxlength="15" placeholder="Enter Name" style="width:100%">
+                </div>
+                <div class="col-xs-5">
+                    <input autocomplete="off" name="locationContact" list="locations" class="form-control" type="text" ng-model="contactLocation"
+                       required ng-pattern="validLocation" placeholder="Enter Location" style="width: 100%;"/>
+                    <datalist id="locations" >
+                        <option  ng-repeat="timeZoneName in timeZoneNames">{{timeZoneName.name}}</option>
+                    </datalist>
+                </div>
+                <div class="col-xs-2">
+                    <input class="btn btn-primary" ng-disabled="addNewContact.$invalid" type="submit" value="ADD">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
