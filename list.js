@@ -1,4 +1,5 @@
-var ContactList = angular.module('ContactsList', [])
+
+var ContactList = angular.module('ContactsList', ['ngSanitize', 'ui.select'])
 
 ContactList.controller('ListCtrl', function ($scope,$interval) {
 
@@ -8,6 +9,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         timeZone: parseInt(moment.tz(moment.tz.guess()).format('Z'))
     }];
 
+    $scope.contactLocation ={};
     $scope.timeZoneNames = [];
     $scope.hours = [];
 
@@ -31,10 +33,10 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         });
     });
 
-    var locationsString = "";
+    /*var locationsString = "";
 
     angular.forEach($scope.timeZoneNames, function(tz,i) {
-        locationsString += "^" + tz.name +"$";
+        locationsString += "^" + tz.name + "$";
 
         if(i != $scope.timeZoneNames.length-1) {
             locationsString += "|"; 
@@ -42,21 +44,22 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
     });
 
     $scope.validLocation = new RegExp(locationsString);
-    $scope.validName = new RegExp("^[a-zA-Z]");
+    $scope.validName = new RegExp("^[a-zA-Z]");*/
 
     $scope.addContact = function () {
 
         $scope.contacts.push({ 
 
             name: $scope.contactName, 
-            location: $scope.contactLocation,
-            timeZone: parseInt(moment.tz($scope.contactLocation).format('Z'))
+            location: $scope.contactLocation.selected.name,
+            timeZone: parseInt(moment.tz($scope.contactLocation.selected.name).format('Z'))
         });
 
         $scope.addNewContact.$setPristine();
         localStorage.list = JSON.stringify($scope.contacts);
+
         $scope.contactName = '';
-        $scope.contactLocation = '';
+        $scope.contactLocation = {};
     };
 
     $scope.clock = function(location) {
@@ -82,6 +85,5 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         $scope.contacts.splice(index, 1);
         localStorage.list = JSON.stringify($scope.contacts);
     };
-});
-
+}); 
 
