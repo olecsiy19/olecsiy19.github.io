@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html ng-app="ContactsList">
 <head>
     <script src="angular.js"></script>
@@ -28,7 +28,7 @@
                         <td><span ng-if="!$first">{{$index}}</span></td>
                         <td><span>{{contact.name}}</span></td>
                         <td><span>{{contact.location}}</span></td>
-                        <td><span>{{addHours(contact.timeZone)}}{{clock(contact.location)}}{{time}}</span></td>
+                        <td><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
                         <td ng-repeat="hour in hours" ng-class="(hour>8 && hour<19)?'true':'false'"><span>{{hour}}</span></td>
                         <td><button  class="btn-primary" ng-if="!$first" ng-click="removeContact($index)">Delete</button></td>
                     </tr>

@@ -6,7 +6,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
     $scope.contacts = [{
         name: 'You',
         location: moment.tz.guess(),
-        timeZone: parseInt(moment.tz(moment.tz.guess()).format('Z'))
+        UTC: moment.tz(moment.tz.guess()).format('Z')
     }];
 
     $scope.contactLocation ={};
@@ -21,7 +21,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
                 $scope.contacts.push({
                     name: list.name,
                     location: list.location,
-                    timeZone: parseInt(moment.tz(list.location).format('Z'))
+                    UTC: moment.tz(list.location).format('Z')
                 });
             }
         });
@@ -52,7 +52,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
 
             name: $scope.contactName, 
             location: $scope.contactLocation.selected.name,
-            timeZone: parseInt(moment.tz($scope.contactLocation.selected.name).format('Z'))
+            UTC: moment.tz($scope.contactLocation.selected.name).format('Z')
         });
 
         $scope.addNewContact.$setPristine();
@@ -62,17 +62,36 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         $scope.contactLocation = {};
     };
 
-    $scope.clock = function(location) {
+   /* $scope.clock = function(location) {
         
-        $scope.time = moment.tz(location).format('HH:mm');
+        $scope.time = {
+            time: moment.tz(location).format('HH:mm:ss');
+        }
 
         $interval(function() {
-            $scope.time = moment.tz(location).format('HH:mm');
-        }, 60000);
+            $scope.time = moment.tz(location).format('HH:mm:ss');
+        }, 1000);
+    };*/
+
+    $scope.timer  = function() {
+
+        $scope.clock = new Date();
+
+        var updateClock = function () {
+            $scope.clock = new Date();
+        };
+
+        setInterval(function () {
+            $scope.$apply(updateClock);
+        }, 1000);
+
+        updateClock();
     };
+    $scope.timer();
 
-    $scope.addHours = function(timeZone){
+    $scope.addHours = function(UTC){
 
+        timeZone = parseInt(UTC);
         $scope.hours[0] = (timeZone <= 0)? timeZone + 24 : timeZone;
 
         for(var i = 1; i < 24; ++i) {
