@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="bootstrap.css">   
     <link rel="stylesheet" href="selectize.default.css">
 
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&language=en"></script>
+
 </head>
 <body>
     <div style="width:1200px; margin:0 auto">
@@ -40,17 +42,16 @@
                        required placeholder="Enter Name" style="width:100%">
                 </div>
                 <div class="col-xs-5">
-                    <ui-select ng-model="contactLocation.selected"  theme="bootstrap" ng-required="contactLocation.selected != false">
-                        <ui-select-match placeholder="Enter Location">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices repeat="timeZoneName in timeZoneNames | filter: $select.search">
-                            <span ng-bind-html="timeZoneName.name"></span>
-                        </ui-select-choices>
-                    </ui-select>
+                    <input class="form-control" ng-model="cityName" required googleplace/>
                 </div>
                 <div class="col-xs-2">
-                    <input class="btn btn-primary" ng-disabled="addNewContact.$invalid" type="submit" value="ADD">
+                    <input class="btn btn-primary" ng-disabled="addNewContact.$invalid||!locationCity.timeZoneName" type="submit" value="ADD">
                 </div>
             </form>
+                <div>selection is: {{locationCity}}</div>
+                <div>selection is: {{cityName}}</div>
+                
+
         </div>
     </div>
 </body>

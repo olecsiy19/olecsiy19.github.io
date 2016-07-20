@@ -1,5 +1,5 @@
 
-var ContactList = angular.module('ContactsList', ['ngSanitize', 'ui.select'])
+var ContactList = angular.module('ContactsList', [])
 
 ContactList.controller('ListCtrl', function ($scope,$interval) {
 
@@ -9,8 +9,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         UTC: moment.tz(moment.tz.guess()).format('Z')
     }];
 
-    $scope.contactLocation ={};
-    $scope.timeZoneNames = [];
+    $scope.locationCity = {};
     $scope.hours = [];
 
     if(localStorage.list){
@@ -21,57 +20,31 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
                 $scope.contacts.push({
                     name: list.name,
                     location: list.location,
-                    UTC: moment.tz(list.location).format('Z')
+                    timeZoneName: list.timeZoneName,
+                    UTC: moment.tz(list.timeZoneName).format('Z')
                 });
             }
         });
     }
-
-    angular.forEach(moment.tz.names(), function(i) {
-        $scope.timeZoneNames.push({
-            name: i
-        });
-    });
-
-    /*var locationsString = "";
-
-    angular.forEach($scope.timeZoneNames, function(tz,i) {
-        locationsString += "^" + tz.name + "$";
-
-        if(i != $scope.timeZoneNames.length-1) {
-            locationsString += "|"; 
-        }
-    });
-
-    $scope.validLocation = new RegExp(locationsString);
-    $scope.validName = new RegExp("^[a-zA-Z]");*/
 
     $scope.addContact = function () {
 
         $scope.contacts.push({ 
 
             name: $scope.contactName, 
-            location: $scope.contactLocation.selected.name,
-            UTC: moment.tz($scope.contactLocation.selected.name).format('Z')
+            location: $scope.locationCity.long_name,
+            timeZoneName: $scope.locationCity.timeZoneName,
+            UTC: moment.tz($scope.locationCity.timeZoneName).format('Z')
         });
 
         $scope.addNewContact.$setPristine();
+
         localStorage.list = JSON.stringify($scope.contacts);
 
+        $scope.cityName = '';
         $scope.contactName = '';
-        $scope.contactLocation = {};
+        $scope.locationCity = {};
     };
-
-   /* $scope.clock = function(location) {
-        
-        $scope.time = {
-            time: moment.tz(location).format('HH:mm:ss');
-        }
-
-        $interval(function() {
-            $scope.time = moment.tz(location).format('HH:mm:ss');
-        }, 1000);
-    };*/
 
     $scope.timer  = function() {
 
@@ -104,5 +77,51 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         $scope.contacts.splice(index, 1);
         localStorage.list = JSON.stringify($scope.contacts);
     };
+
+    
 }); 
 
+ContactList.directive('googleplace', function() {
+    return {
+
+        link: function(scope, element, attrs, model) {
+            var opts = {types: ['(cities)']};
+            var autocomplete = new google.maps.places.Autocomplete(element[0],opts);
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function() {
+
+                var getJSON = function(latitude, longitude) {
+
+                    return new Promise(function(resolve, reject) {
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('get', 'https://maps.googleapis.com/maps/api/timezone/json?location='+latitude+','+longitude+'&timestamp=1331766000&sensor=false', true);
+                        xhr.responseType = 'json';
+
+                        xhr.onload = function() {
+
+                            resolve(xhr.response.timeZoneId);
+                        };
+                        xhr.send();
+                    });
+                };
+
+                var place = autocomplete.getPlace();
+                var city = place.address_components[0];
+
+                delete city.short_name;
+                delete city.types;
+                
+                city.longitude = place.geometry.location.lng();
+                city.latitude = place.geometry.location.lat();
+                getJSON(city.latitude, city.longitude).then(function(timeZoneId) {
+                    city.timeZoneName = timeZoneId;
+                });
+                
+                scope.locationCity = city;
+                scope.$apply();
+                console.log(scope.locationCity);
+            });
+        }
+    };
+});
