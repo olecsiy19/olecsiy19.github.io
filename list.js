@@ -86,8 +86,6 @@ ContactList.directive('googleplace', function() {
 
         link: function(scope, element, attrs, model) {
             var opts = {types: ['(cities)']};
-            window.onerror = myOnError;
-                function myOnError(msg, url, lno) {return true} 
             var autocomplete = new google.maps.places.Autocomplete(element[0],opts);
 
             google.maps.event.addListener(autocomplete, 'place_changed', function() {
