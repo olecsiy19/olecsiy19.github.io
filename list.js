@@ -162,6 +162,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
 
     function getUserInformationsByIp() {
 
+
         var xhr = new XMLHttpRequest();
         xhr.open('get', 'https://freegeoip.net/json/', true);
         xhr.responseType = 'json';
