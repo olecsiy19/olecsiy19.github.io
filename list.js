@@ -167,6 +167,7 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
         xhr.responseType = 'json';
 
         xhr.onload = function() {
+            
             var cord = xhr.response;
             $scope.userInformations.location = cord.city;
             $scope.userInformations.timeZoneName = cord.time_zone;
