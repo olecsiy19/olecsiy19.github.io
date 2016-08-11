@@ -1,12 +1,7 @@
 <!doctype html>
-<html ng-app="ContactsList">
+<html>
 <head>
     <script src="angular.js"></script>
-    <script src="angular-sanitize.js"></script>
-
-    <script src="select.js"></script>
-    <link rel="stylesheet" href="select.css">
-
     <script src="moment.min.js" charset="utf-8"></script>
     <script src="moment-timezone-with-data.min.js" charset="utf-8"></script>
 
@@ -14,25 +9,50 @@
     <link rel="stylesheet" href="list.css">
 
     <link rel="stylesheet" href="bootstrap.css">   
-    <link rel="stylesheet" href="selectize.default.css">
-
+    
+    <script src="sancalc.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSC5DzkF1dsE8D1Z76AWVXvDhgdhgvSWk&libraries=places&language=en"></script>
-
 </head>
-<body>
-    <div style="width:1200px; margin:0 auto">
+<body ng-app="ContactsList">
+    <div style="margin:0 auto" >
         <h2 class="h2">Contacts list</h2>
-        <div class="panel" ng-controller="ListCtrl">
-            <h4 class="h4">You have {{contacts.length-1}} contacts</h4>
+        <div class="panel" ng-controller="ListCtrl" >
+            <h4 class="h4">You have {{contacts.length}} contacts</h4>
+            <label id="sliderLabel">
+                <input type="checkbox" ng-model="group" />
+                <span id="slider">
+                    <span id="sliderOn">Home</span>
+                    <span id="sliderOff">Work</span>
+                    <span id="sliderBlock"></span>
+                </span>
+            </label>
+            <div>{{loadList()}}</div>
+            <div  class="hour"  ng-mouseleave="onMouseLeave()" ng-style="{'left': (onMouseMoveResult)? onMouseMoveResult : rectangle(), 'height': rectangleHeight(), 'width': rectangleWidth}"></div>
             <table class="table">
                 <tbody>
+                    <tr>
+                        <td style="width:2%" ng-if="!$first"><span>{{$index}}</span></td>
+                        <td style="width:25%"><span>{{userInformations.name}}</span></td>
+                        <td style="width:12%">
+                            <form name="user" novalidate>
+                                <input ng-model="userCity" name="userLocation" placeholder="{{userInformations.location}}" required googleplace/>
+                            </form>
+                        </td>
+                        <td style="width:5%"><span>{{addHours(userInformations.UTC)}}{{clock | date: ' H:mm': userInformations.UTC}}</span></td>
+                        <td class="time" ng-if="!group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'true': workTime(hour),'false':!workTime(hour), 'day': lightDay(hour, userInformations), 'night': !lightDay(hour, userInformations), 'first_hour_day': firstLastHour(hour, userInformations.sunrise), 'last_hour_day': firstLastHour(hour, userInformations.sunset)}">{{hour}}</td>
+
+                        <td class="time" ng-if="group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'day_of_home_group': lightDay(hour, userInformations), 'night_of_home_group': !lightDay(hour, userInformations), 'first_hour_day_of_home_group': firstLastHour(hour, userInformations.sunrise), 'last_hour_day_of_home_group': firstLastHour(hour, userInformations.sunset)}">{{hour}}</td>
+                        <td style="width:8%"><button  class="btn-primary" ng-if="show"  ng-click="removeUserInformation()">Delete</button></td>
+                    </tr>
                     <tr ng-repeat="contact in contacts">
-                        <td><span ng-if="!$first">{{$index}}</span></td>
-                        <td><span>{{contact.name}}</span></td>
-                        <td><span>{{contact.location}}</span></td>
-                        <td><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
-                        <td ng-repeat="hour in hours" ng-class="(hour>8 && hour<19)?'true':'false'"><span>{{hour}}</span></td>
-                        <td><button  class="btn-primary" ng-if="!$first" ng-click="removeContact($index)">Delete</button></td>
+                        <td style="width:2%"><span>{{$index+1}}</span></td>
+                        <td style="width:25%"><span>{{contact.name}}</span></td>
+                        <td style="width:12%"><span>{{contact.location}}</span></td>
+                        <td style="width:5%"><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
+                        <td class="time" ng-if="!group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'true': workTime(hour),'false':!workTime(hour), 'day': lightDay(hour, contact), 'night': !lightDay(hour, contact), 'first_hour_day': firstLastHour(hour, contact.sunrise), 'last_hour_day': firstLastHour(hour, contact.sunset)}">{{hour}}</td>
+
+                        <td class="time" ng-if="group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'day_of_home_group': lightDay(hour, contact), 'night_of_home_group': !lightDay(hour, contact), 'first_hour_day_of_home_group': firstLastHour(hour, contact.sunrise), 'last_hour_day_of_home_group': firstLastHour(hour, contact.sunset)}">{{hour}}</td>
+                        <td style="width:8%"><button  class="btn-primary" ng-click="removeContact($index)">Delete</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -42,16 +62,13 @@
                        required placeholder="Enter Name" style="width:100%">
                 </div>
                 <div class="col-xs-5">
-                    <input class="form-control" ng-model="cityName" placeholder="Enter Location" required googleplace/>
+                    <input class="form-control" ng-model="cityName" name="locationCity" placeholder="Enter Location" required googleplace/>
                 </div>
                 <div class="col-xs-2">
                     <input class="btn btn-primary" ng-disabled="addNewContact.$invalid||!locationCity.timeZoneName" type="submit" value="ADD">
                 </div>
-            </form>
-                <!--div>selection is: {{locationCity}}</div>
-                <div>selection is: {{cityName}}</div-->
-                
 
+            </form>
         </div>
     </div>
 </body>
