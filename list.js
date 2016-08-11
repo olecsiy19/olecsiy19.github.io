@@ -163,16 +163,16 @@ ContactList.controller('ListCtrl', function ($scope,$interval) {
     function getUserInformationsByIp() {
 
         var xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://ip-api.com/json', true);
+        xhr.open('get', 'https://freegeoip.net/json/', true);
         xhr.responseType = 'json';
 
         xhr.onload = function() {
             var cord = xhr.response;
             $scope.userInformations.location = cord.city;
-            $scope.userInformations.timeZoneName = cord.timezone;
-            $scope.userInformations.UTC = moment.tz(cord.timezone).format('Z');
-            $scope.userInformations.latitude = cord.lat;
-            $scope.userInformations.longitude = cord.lon;
+            $scope.userInformations.timeZoneName = cord.time_zone;
+            $scope.userInformations.UTC = moment.tz(cord.time_zone).format('Z');
+            $scope.userInformations.latitude = cord.latitude;
+            $scope.userInformations.longitude = cord.longitude;
             $scope.userInformations.sunrise = getSunrise($scope.userInformations.latitude, $scope.userInformations.longitude, $scope.userInformations.timeZoneName);
             $scope.userInformations.sunset = getSunset($scope.userInformations.latitude, $scope.userInformations.longitude, $scope.userInformations.timeZoneName);
         };
