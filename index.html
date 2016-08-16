@@ -21,17 +21,16 @@
             <label id="sliderLabel">
                 <input type="checkbox" ng-model="group" />
                 <span id="slider">
-                    <span id="sliderOn">Home</span>
+                    <span id="sliderOn">Sun</span>
                     <span id="sliderOff">Work</span>
                     <span id="sliderBlock"></span>
                 </span>
             </label>
-            <div>{{loadList()}}</div>
-            <div  class="hour"  ng-mouseleave="onMouseLeave()" ng-style="{'left': (onMouseMoveResult)? onMouseMoveResult : rectangle(), 'height': rectangleHeight(), 'width': rectangleWidth}"></div>
+            <div  class="hour"  ng-mouseleave="onMouseLeave()" ng-style="{'left': (rectangleLeft)? rectangleLeft : rectangle(), 'height': rectangleHeight(), 'width': rectangleWidth}"></div>
             <table class="table">
                 <tbody>
                     <tr>
-                        <td style="width:2%" ng-if="!$first"><span>{{$index}}</span></td>
+                        <td style="width:2%"><span></span></td>
                         <td style="width:25%"><span>{{userInformations.name}}</span></td>
                         <td style="width:12%">
                             <form name="user" novalidate>
@@ -39,19 +38,15 @@
                             </form>
                         </td>
                         <td style="width:5%"><span>{{addHours(userInformations.UTC)}}{{clock | date: ' H:mm': userInformations.UTC}}</span></td>
-                        <td class="time" ng-if="!group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'true': workTime(hour),'false':!workTime(hour), 'day': lightDay(hour, userInformations), 'night': !lightDay(hour, userInformations), 'first_hour_day': firstLastHour(hour, userInformations.sunrise), 'last_hour_day': firstLastHour(hour, userInformations.sunset)}">{{hour}}</td>
-
-                        <td class="time" ng-if="group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'day_of_home_group': lightDay(hour, userInformations), 'night_of_home_group': !lightDay(hour, userInformations), 'first_hour_day_of_home_group': firstLastHour(hour, userInformations.sunrise), 'last_hour_day_of_home_group': firstLastHour(hour, userInformations.sunset)}">{{hour}}</td>
-                        <td style="width:8%"><button  class="btn-primary" ng-if="show"  ng-click="removeUserInformation()">Delete</button></td>
+                        <td class="time" sun-and-work-day="userInformations" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-bind="hour"></td>
+                        <td style="width:8%"><button  class="btn-primary" ng-if="showButtom"  ng-click="removeUserInformation()">Delete</button></td>
                     </tr>
                     <tr ng-repeat="contact in contacts">
                         <td style="width:2%"><span>{{$index+1}}</span></td>
                         <td style="width:25%"><span>{{contact.name}}</span></td>
                         <td style="width:12%"><span>{{contact.location}}</span></td>
                         <td style="width:5%"><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
-                        <td class="time" ng-if="!group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'true': workTime(hour),'false':!workTime(hour), 'day': lightDay(hour, contact), 'night': !lightDay(hour, contact), 'first_hour_day': firstLastHour(hour, contact.sunrise), 'last_hour_day': firstLastHour(hour, contact.sunset)}">{{hour}}</td>
-
-                        <td class="time" ng-if="group" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-class="{'day_of_home_group': lightDay(hour, contact), 'night_of_home_group': !lightDay(hour, contact), 'first_hour_day_of_home_group': firstLastHour(hour, contact.sunrise), 'last_hour_day_of_home_group': firstLastHour(hour, contact.sunset)}">{{hour}}</td>
+                        <td class="time" sun-and-work-day="contact" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-bind="hour"></td>
                         <td style="width:8%"><button  class="btn-primary" ng-click="removeContact($index)">Delete</button></td>
                     </tr>
                 </tbody>

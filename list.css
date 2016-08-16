@@ -1,8 +1,8 @@
-.true {
+.work_hour {
 	background-color: lightgreen;
 
 }
-.false {
+.not_work_hour {
 	background-color: lightpink;
 }
 .h2{
@@ -12,12 +12,12 @@
 	text-align: center;
 
 }
-.first_hour_day {
+.sunrise {
     border-top: 5px solid transparent!important;
     border-image: linear-gradient(to left, yellow 0%, grey 100%)!important;
     border-image-slice: 1!important;
 }
-.last_hour_day {
+.sunset {
     border-top: 5px solid transparent!important;
     border-image: linear-gradient(to right, yellow 0%, grey 100%)!important;
     border-image-slice: 1!important;
@@ -41,19 +41,19 @@ td {
 	border-radius: 5px; 
 }
 
-.first_hour_day_of_home_group {
+.sunrise_sun{
     background-image: linear-gradient(to left, #87CEFA 0%, #483D8B 100%);
     background-image-slice: 1;
 }
-.last_hour_day_of_home_group {
+.sunset_sun {
     background-image: linear-gradient(to right, #87CEFA 0%, #483D8B 100%);
     background-image-slice: 1;
 }
-.night_of_home_group {
+.night_sun {
 	background-color: #483D8B;
 	color: #87CEFA;
 }
-.day_of_home_group {
+.day_sun {
 	background-color: #87CEFA;
 }
 
