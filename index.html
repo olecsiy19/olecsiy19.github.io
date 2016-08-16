@@ -1,20 +1,20 @@
 <!doctype html>
 <html>
 <head>
-    <script src="angular.js"></script>
-    <script src="moment.min.js" charset="utf-8"></script>
-    <script src="moment-timezone-with-data.min.js" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.5/moment-timezone-with-data.min.js" charset="utf-8"></script>
 
     <script src="list.js"></script>
     <link rel="stylesheet" href="list.css">
 
-    <link rel="stylesheet" href="bootstrap.css">   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">   
 
     <script src="sancalc.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSC5DzkF1dsE8D1Z76AWVXvDhgdhgvSWk&libraries=places&language=en"></script>
 </head>
 <body ng-app="ContactsList">
-    <div style="margin:0 auto" >
+    <div>
         <h2 class="h2">Contacts list</h2>
         <div class="panel" ng-controller="ListCtrl" >
             <h4 class="h4">You have {{contacts.length}} contacts</h4>
@@ -30,34 +30,34 @@
             <table class="table">
                 <tbody>
                     <tr>
-                        <td style="width:2%"><span></span></td>
-                        <td style="width:25%"><span>{{userInformations.name}}</span></td>
-                        <td style="width:12%">
+                        <td class="index"><span></span></td>
+                        <td class="name"><span>{{userInformation.name}}</span></td>
+                        <td class="location">
                             <form name="user" novalidate>
-                                <input ng-model="userCity" name="userLocation" placeholder="{{userInformations.location}}" required googleplace/>
+                                <input ng-model="userCity" name="userLocation" placeholder="{{userInformation.location}}" required google-place/>
                             </form>
                         </td>
-                        <td style="width:5%"><span>{{addHours(userInformations.UTC)}}{{clock | date: ' H:mm': userInformations.UTC}}</span></td>
-                        <td class="time" sun-and-work-day="userInformations" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-bind="hour"></td>
-                        <td style="width:8%"><button  class="btn-primary" ng-if="showButtom"  ng-click="removeUserInformation()">Delete</button></td>
+                        <td class="clock"><span>{{addHours(userInformation.UTC)}}{{clock | date: ' H:mm': userInformation.UTC}}</span></td>
+                        <td class="time" sun-and-work-day="userInformation" ng-mouseover="onMouseOver($event)" ng-repeat="hour in hours" ng-bind="hour"></td>
+                        <td class="del_button"><button  class="btn-primary" ng-if="showButtom"  ng-click="removeUserInformation()">Delete</button></td>
                     </tr>
                     <tr ng-repeat="contact in contacts">
-                        <td style="width:2%"><span>{{$index+1}}</span></td>
-                        <td style="width:25%"><span>{{contact.name}}</span></td>
-                        <td style="width:12%"><span>{{contact.location}}</span></td>
-                        <td style="width:5%"><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
-                        <td class="time" sun-and-work-day="contact" ng-mouseover="onMouseOver($event)" style="width:2%"  ng-repeat="hour in hours" ng-bind="hour"></td>
-                        <td style="width:8%"><button  class="btn-primary" ng-click="removeContact($index)">Delete</button></td>
+                        <td class="index"><span>{{$index+1}}</span></td>
+                        <td class="name"><span>{{contact.name}}</span></td>
+                        <td class="location"><span>{{contact.location}}</span></td>
+                        <td class="clock"><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
+                        <td class="time" sun-and-work-day="contact" ng-mouseover="onMouseOver($event)" ng-repeat="hour in hours" ng-bind="hour"></td>
+                        <td class="del_button"><button  class="btn-primary" ng-click="removeContact($index)">Delete</button></td>
                     </tr>
                 </tbody>
             </table>
             <form class="row" name="addNewContact"  novalidate ng-submit="addContact()">
                 <div class="col-xs-5">
                     <input autocomplete="off" name="nameContact" class="form-control" type="text" ng-model="contactName"
-                       required placeholder="Enter Name" style="width:100%">
+                       required placeholder="Enter Name">
                 </div>
                 <div class="col-xs-5">
-                    <input class="form-control" ng-model="cityName" name="locationCity" placeholder="Enter Location" required googleplace/>
+                    <input class="form-control" ng-model="cityName" name="locationCity" placeholder="Enter Location" required google-place/>
                 </div>
                 <div class="col-xs-2">
                     <input class="btn btn-primary" ng-disabled="addNewContact.$invalid||!locationCity.timeZoneName" type="submit" value="ADD">

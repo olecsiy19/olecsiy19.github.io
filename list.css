@@ -139,3 +139,23 @@ p {
     left: 96px;
     width: 54px;
 }
+
+.index {
+    width: 2%;
+}
+.name {
+    width: 25%;
+}
+.location {
+    width: 12%;
+}
+.clock {
+    width: 5%;
+    text-align: center;
+}
+.time {
+    width: 2%;
+}
+.del_button {
+    width: 8%;
+}
