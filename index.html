@@ -47,7 +47,11 @@
                         <td class="location"><span>{{contact.location}}</span></td>
                         <td class="clock"><span>{{addHours(contact.UTC)}}{{clock | date: ' H:mm': contact.UTC}}</span></td>
                         <td class="time" sun-and-work-day="contact" ng-mouseover="onMouseOver($event)" ng-repeat="hour in hours" ng-bind="hour"></td>
-                        <td class="del_button"><button  class="btn-primary" ng-click="removeContact($index)">Delete</button></td>
+                        
+                        <td class="del_button"><input type="checkbox" ng-model="contact.conference" ng-click="calculationConferenceTime()"></input>
+                        <button  class="btn-primary" ng-click="removeContact($index)">Delete</button>
+                        </td>
+
                     </tr>
                 </tbody>
             </table>
@@ -64,6 +68,10 @@
                 </div>
 
             </form>
+
+            <div ng-if="conferenceTime.length">
+                Optimal time for conference : {{conferenceTime}}
+            </div>
         </div>
     </div>
 </body>

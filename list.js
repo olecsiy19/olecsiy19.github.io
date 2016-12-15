@@ -10,6 +10,7 @@ ContactList.controller('ListCtrl', function ($scope) {
         UTC: moment.tz(moment.tz.guess()).format('Z')
     };
 
+    $scope.conferenceTime = [];
     $scope.contacts = [];
     $scope.hours = [];
     $scope.locationCity = {};
@@ -37,8 +38,7 @@ ContactList.controller('ListCtrl', function ($scope) {
     };
 
     $scope.addContact = function() {
-        $scope.locationCity.name = $scope.contactName;
-        
+        $scope.locationCity.name = $scope.contactName; 
         pushContact($scope.locationCity);
         localStorage.contacts = JSON.stringify($scope.contacts);
 
@@ -85,12 +85,86 @@ ContactList.controller('ListCtrl', function ($scope) {
     $scope.removeContact = function(index) {
         $scope.contacts.splice(index, 1);
         localStorage.contacts = JSON.stringify($scope.contacts);
+        $scope.calculationConferenceTime();
     };
 
     $scope.removeUserInformation = function() {
         localStorage.removeItem("userInformation");
         getUserInformationByIp();
         $scope.showButtom = false;
+    };
+
+    $scope.calculationConferenceTime = function() {
+
+        $scope.conferenceTime = [];
+
+        var timeZone = parseInt($scope.userInformation.UTC);
+        var hours = [];
+        hours[0] = (timeZone <= 0)? timeZone + 24 : timeZone;
+
+        for (var i = 1; i < 24; ++i) {
+            hours[i] = (hours[i-1] == 24)? 1 : hours[i-1] + 1;
+        }
+        $scope.userInformation.hours = hours;
+
+
+        angular.forEach($scope.contacts, function(contact) {
+            if(contact.conference == true) {
+
+                var timeZone = parseInt(contact.UTC);
+                var hours = [];
+                hours[0] = (timeZone <= 0)? timeZone + 24 : timeZone;
+
+                for (var i = 1; i < 24; ++i) {
+                    hours[i] = (hours[i-1] == 24)? 1 : hours[i-1] + 1;
+                }
+                contact.hours = hours;
+            }
+        });
+
+        var k = [];
+        var counter = 0;
+
+        for (var i = 0; i < 24; ++i) {
+            k[i] = 0
+            angular.forEach($scope.contacts, function(contact) {
+                if(contact.conference == true) { 
+                    counter++;
+                    if(contact.hours[i] <= 8 && contact.hours[i] >= 2) {
+                        k[i] = k[i] + (9 - contact.hours[i]);
+                    } else if(contact.hours[i] >= 19) {
+                        k[i] = k[i] + (contact.hours[i] - 18);
+                    } else if(contact.hours[i] == 1) {
+                        k[i] = k[i] + 7;
+                    }
+                }
+            });
+
+            if($scope.userInformation.hours[i] <= 8 && $scope.userInformation.hours[i] >= 2) {
+                k[i] = k[i] + (9 - $scope.userInformation.hours[i]);
+            } else if($scope.userInformation.hours[i] >= 19) {
+                k[i] = k[i] + ($scope.userInformation.hours[i] - 18);
+            } else if($scope.userInformation.hours[i] == 1) {
+                k[i] = k[i] + 7;
+            }
+        }
+        var min = k[0];
+
+        k.forEach(function(value){
+            if(value < min) {
+                min = value;
+            }
+        });
+
+        k.forEach(function(value, i) {
+            if(value == min) {
+                $scope.conferenceTime.push(i + parseInt($scope.userInformation.UTC)); 
+            }
+        });
+
+        if(counter == 0) {
+            $scope.conferenceTime = [];
+        }
     };
 
     var timer  = function() {
